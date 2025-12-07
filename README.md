@@ -3,7 +3,9 @@ Check Bit components for issues in a Bit workspace.
 
 # GitHub Actions
 
-This CD Task, executs `bit status --strict && bit build` inside the workspace directory.
+This task executes `bit ci verify` inside the workspace directory.
+
+**Note:** `bit-tasks/verify@v2` requires Bit `^1.11.42`, if you need a lower version, use `bit-tasks/verify@v1`
 
 ## Inputs
 
@@ -13,17 +15,20 @@ This CD Task, executs `bit status --strict && bit build` inside the workspace di
 
 ## Example usage
 
-Define the `bit-tasks/init@v1` action in your pipeline before using the Verify.
+**Note:** Use `bit-task/init@v1` as a prior step in your action before running `bit-tasks/verify@v2`.
 
 ```yaml
 name: Test Bit Verify
 on:
   workflow_dispatch:
 jobs:
-  release:
+  verify:
     runs-on: ubuntu-latest
     env:
-      BIT_TOKEN: ${{ secrets.BIT_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GIT_USER_NAME: ${{ secrets.GIT_USER_NAME }}
+      GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
+      BIT_CONFIG_ACCESS_TOKEN: ${{ secrets.BIT_CONFIG_ACCESS_TOKEN }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -32,7 +37,7 @@ jobs:
         with:
           ws-dir: '<WORKSPACE_DIR_PATH>'
       - name: Bit Verify
-        uses: bit-tasks/verify@v1
+        uses: bit-tasks/verify@v2
 ```
 
 # Contributor Guide
@@ -51,4 +56,4 @@ git tag -a -m "action release" v1 --force
 git push --follow-tags
 ```
 
-For more information refer [Create a javascript action](https://docs.github.com/en/actions/creating-actions/creating-a-javascript-action)
+For more information, refer to [Create a javascript action](https://docs.github.com/en/actions/creating-actions/creating-a-javascript-action)
